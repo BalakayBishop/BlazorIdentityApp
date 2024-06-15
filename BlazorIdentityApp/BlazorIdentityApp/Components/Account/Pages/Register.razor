@@ -6,6 +6,8 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using BlazorIdentityApp.Data
+@using Domain.IRepository
+@using Domain.ViewModels
 
 @inject UserManager<ApplicationUser> UserManager
 @inject IUserStore<ApplicationUser> UserStore
@@ -14,6 +16,7 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IUsersRepository UsersRepository
 
 <PageTitle>Register</PageTitle>
 
@@ -21,12 +24,20 @@
 
 <div class="row">
     <div class="col-md-4">
-        <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
             <h2>Create a new account.</h2>
             <hr />
-            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" placeholder="John" />
+                <label for="FirstName">First Name</label>
+                <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" placeholder="Helldiver" />
+                <label for="LastName">Last Name</label>
+                <ValidationMessage For="() => Input.LastName" class="text-danger" />
+            </div>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label for="email">Email</label>
@@ -43,7 +54,11 @@
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <div class="mb-3"></div>
+            <ValidationSummary class="text-danger" role="alert" />
+            <DataAnnotationsValidator />
         </EditForm>
+        <StatusMessage Message="@Message" />
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
@@ -79,6 +94,15 @@
             identityErrors = result.Errors;
             return;
         }
+
+        UsersViewModel newDbUser = new()
+        {
+            FirstName = Input.FirstName,
+            LastName = Input.LastName,
+            Email = Input.Email
+        };
+
+        UsersViewModel createDbUser = await UsersRepository.CreateAsync(newDbUser);
 
         Logger.LogInformation("User created a new account with password.");
 
@@ -126,6 +150,14 @@
 
     private sealed class InputModel
     {
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; } = "";
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
