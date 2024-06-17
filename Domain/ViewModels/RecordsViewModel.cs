@@ -10,5 +10,7 @@ namespace Domain.ViewModels
         public string Description { get; set; }
 
         public DateTime CreatedDate { get; set; }
+
+        public string UserEmail { get; set; }
     }
 }

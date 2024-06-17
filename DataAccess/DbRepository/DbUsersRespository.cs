@@ -17,5 +17,11 @@ namespace DataAccess.DbRepository
         {
             _db = db;
         }
+
+        public async Task<Users> GetByEmailAsync(string email)
+        {
+            Users user = await _db.Set<Users>().FirstOrDefaultAsync(e => e.Email == email);
+            return user;
+        }
     }
 }

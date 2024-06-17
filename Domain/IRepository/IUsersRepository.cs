@@ -11,6 +11,7 @@ namespace Domain.IRepository
     {
         Task<UsersViewModel> CreateAsync(UsersViewModel user);
         Task<UsersViewModel> ReadAsync(int id);
+        Task<UsersViewModel> ReadAsync(string email);
         Task<List<UsersViewModel>> ReadAllAsync();
         Task<UsersViewModel> UpdateAsync(UsersViewModel user);
         Task<List<UsersViewModel>> UpdateRangeAsync(List<UsersViewModel> users);

@@ -20,6 +20,7 @@ namespace DataAccess.Entities
         public string LastName { get; set; } = null!;
 
         [Required, NotNull]
+        [EmailAddress]
         public string Email { get; set; } = null!;
 
         [Required, NotNull]

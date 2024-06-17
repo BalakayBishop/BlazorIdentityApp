@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorIdentityApp", "Blazor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorIdentityApp.Client", "BlazorIdentityApp\BlazorIdentityApp.Client\BlazorIdentityApp.Client.csproj", "{A79DF1EA-E194-4251-B19D-C178885E6F22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{2010D031-48C4-4D23-AF52-5792DE1F7CCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{2010D031-48C4-4D23-AF52-5792DE1F7CCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{CE6C6F2F-3992-4388-8CF9-81C3E5E0F5AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{CE6C6F2F-3992-4388-8CF9-81C3E5E0F5AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{888BAD2A-1C3D-43B9-BDA2-DA4DFD33B558}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{888BAD2A-1C3D-43B9-BDA2-DA4DFD33B558}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

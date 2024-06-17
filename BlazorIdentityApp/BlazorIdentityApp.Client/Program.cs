@@ -35,4 +35,9 @@ builder.Services.AddTransient<IRecordsRepository, RecordsRepository>();
 builder.Services.AddTransient<IDbUserRecordsRepository, DbUserRecordsRepository>();
 builder.Services.AddTransient<IUserRecordsRepository, UserRecordsRepository>();
 
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7071")
+});
+
 await builder.Build().RunAsync();

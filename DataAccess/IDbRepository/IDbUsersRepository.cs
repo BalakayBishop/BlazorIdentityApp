@@ -9,6 +9,6 @@ namespace DataAccess.IDbRepository
 {
     public interface IDbUsersRepository : IDbBaseRepository<Users>
     {
-
+        Task<Users> GetByEmailAsync(string email);
     }
 }

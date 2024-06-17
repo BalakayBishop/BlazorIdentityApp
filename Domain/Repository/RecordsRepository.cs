@@ -29,7 +29,7 @@ namespace Domain.Repository
                     Description = record.Description,
                     CreatedDate = DateTime.UtcNow,
                 };
-                 _dbRecordsRepository.Create(dbRecord);
+                 await _dbRecordsRepository.Create(dbRecord);
                 record.Id = dbRecord.Id;
 
                 return record;

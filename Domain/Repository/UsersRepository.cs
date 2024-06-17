@@ -26,6 +26,8 @@ namespace Domain.Repository
                 {
                     FirstName = user.FirstName,
                     LastName = user.LastName,
+                    Email = user.Email,
+                    CreatedDate = DateTime.UtcNow,
                 };
                 await _dbUsersRepository.Create(dbUser);
                 user.Id = dbUser.Id;
@@ -43,6 +45,33 @@ namespace Domain.Repository
             try
             {
                 Users dbUser = await _dbUsersRepository.GetById(id);
+
+                if (dbUser is not null)
+                {
+                    UsersViewModel user = new()
+                    {
+                        Id = dbUser.Id,
+                        FirstName = dbUser.FirstName,
+                        LastName = dbUser.LastName,
+                        CreatedDate = dbUser.CreatedDate,
+                    };
+
+                    return user;
+                }
+
+                return null!;
+            }
+            catch
+            {
+                return null!;
+            }
+        }
+
+        public async Task<UsersViewModel> ReadAsync(string email)
+        {
+            try
+            {
+                Users dbUser = await _dbUsersRepository.GetByEmailAsync(email);
 
                 if (dbUser is not null)
                 {
