@@ -50,7 +50,7 @@ else
                         </li>
                     }
                 }
-                else
+                else if (records is null || records.Count == 0)
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div class="ms-2 me-auto">
@@ -64,7 +64,7 @@ else
 }
 
 @code {
-    List<RecordsViewModel> records = new();
+    List<RecordsViewModel> records;
     bool loading = true;
     private InputModel Input = new();
 
