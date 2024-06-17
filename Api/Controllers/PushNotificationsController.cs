@@ -10,10 +10,12 @@ namespace Api.Controllers
     [Route("api/[controller]")]
     public class PushNotificationsController : Controller
     {
+        private readonly IUsersRepository _usersRepository;
         private readonly IPushNotificationsRepository _notificationsRepository;
-        public PushNotificationsController(IPushNotificationsRepository notificationsRepository)
+        public PushNotificationsController(IPushNotificationsRepository notificationsRepository, IUsersRepository usersRepository)
         {
             _notificationsRepository = notificationsRepository;
+            _usersRepository = usersRepository;
         }
 
         [HttpGet]
@@ -24,14 +26,18 @@ namespace Api.Controllers
         }
 
         [HttpPost("CreateOrUpdate")]
-        public async Task<IActionResult> CreatePushNotification([FromBody] string json)
+        public async Task<IActionResult> CreatePushNotification([FromBody] NotificationRequestViewModel request)
         {
+            string json = request.json;
+            string email = request.email;
             if (json is not "null")
             {
                 try
                 {
+                    UsersViewModel user = await _usersRepository.ReadAsync(email);
+
                     PushSubViewModel pushSubObj = JsonConvert.DeserializeObject<PushSubViewModel>(json) ?? throw new NullReferenceException();
-                    PushNotificationsViewModel dbPushNotification = await _notificationsRepository.ReadAsync(1);
+                    PushNotificationsViewModel dbPushNotification = await _notificationsRepository.ReadByUserIdAsync(user.Id);
                     if (dbPushNotification is not null)
                     {
                         // Record exists, update with new subscription info
@@ -47,6 +53,7 @@ namespace Api.Controllers
                         // Record does not exist, create new 
                         PushNotificationsViewModel newPushNotification = new()
                         {
+                            UserId = user.Id,
                             Endpoint = pushSubObj.Endpoint,
                             P256DH = pushSubObj.Keys.P256dh,
                             Auth = pushSubObj.Keys.Auth,

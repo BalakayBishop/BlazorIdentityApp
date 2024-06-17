@@ -29,7 +29,7 @@ namespace Domain.Repository
                     Body = userNotification.Body,
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = new DateTime(),
-                    UserId = 1,
+                    UserId = userNotification.UserId,
                     PushId = userNotification.PushId,
                 };
                 await _dbUserNotificationsRepository.Create(dbUserNotification);
@@ -121,8 +121,6 @@ namespace Domain.Repository
                         dbUserNotification.Title = userNotification.Title;
                         dbUserNotification.Body = userNotification.Body;
                         dbUserNotification.UpdatedDate = DateTime.UtcNow;
-                        dbUserNotification.UserId = 1;
-                        dbUserNotification.PushId = userNotification.PushId;
 
                         await _dbUserNotificationsRepository.Update(dbUserNotification);
 
@@ -153,8 +151,6 @@ namespace Domain.Repository
                             dbUserNotification.Title = userNotification.Title;
                             dbUserNotification.Body = userNotification.Body;
                             dbUserNotification.UpdatedDate = DateTime.UtcNow;
-                            dbUserNotification.UserId = 1;
-                            dbUserNotification.PushId = userNotification.PushId;
 
                             dbUserNotifications.Add(dbUserNotification);
                         }

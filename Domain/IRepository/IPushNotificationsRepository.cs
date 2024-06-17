@@ -11,7 +11,7 @@ namespace Domain.IRepository
     {
         Task<PushNotificationsViewModel> CreateAsync(PushNotificationsViewModel pushNotification);
         Task<PushNotificationsViewModel> ReadAsync(int id);
-        Task<PushNotificationsViewModel> ReadByEndpointAsync(string endpoint);
+        Task<PushNotificationsViewModel> ReadByUserIdAsync(int userId);
         Task<List<PushNotificationsViewModel>> ReadAllAsync();
         Task<PushNotificationsViewModel> UpdateAsync(PushNotificationsViewModel pushNotification);
         Task<List<PushNotificationsViewModel>> UpdateRangeAsync(List<PushNotificationsViewModel> pushNotifications);

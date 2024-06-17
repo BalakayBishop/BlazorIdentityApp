@@ -1,9 +1,10 @@
-﻿@page "/notifications"
+﻿@page "/Account/Manage/Notifications"
 
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize]
 
+@inject AuthenticationStateProvider _auth
 @inject IPushNotificationsRepository _pushNotificationsRepository
 @inject HttpClient _httpClient
 
@@ -40,14 +41,30 @@
         base.OnInitialized();
     }
 
+    public async Task<string> GetCurrentUserEmail()
+    {
+        var currentUser = await _auth.GetAuthenticationStateAsync();
+        return currentUser.User.Identity.Name;
+    }
+
     [JSInvokable]
     public static async Task<string> CreateOrUpdatePushSubscription(string data)
     {
         try
         {
             HttpClient newHttp = new HttpClient();
-            newHttp.BaseAddress = new Uri("https://localhost:7299");
-            HttpResponseMessage response = await newHttp.PostAsJsonAsync("api/PushNotifications/CreateOrUpdate", data);
+            newHttp.BaseAddress = new Uri("https://localhost:7071");
+
+            Notifications thisObj = new();
+            string email = await thisObj.GetCurrentUserEmail();
+
+            NotificationRequestViewModel request = new()
+            {
+                json = data,
+                email = email
+            };
+
+            HttpResponseMessage response = await newHttp.PostAsJsonAsync("api/PushNotifications/CreateOrUpdate", request);
 
             if (response.IsSuccessStatusCode)
             {

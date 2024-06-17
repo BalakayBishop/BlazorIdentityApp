@@ -32,9 +32,8 @@ namespace Domain.Repository
                     Auth = pushNotification.Auth,
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UserId = 1
+                    UserId = pushNotification.UserId,
                 };
-                dbPushNotification.User = null;
                 await _dbPushNotificationsRepository.Create(dbPushNotification);
                 pushNotification.Id = dbPushNotification.Id;
 
@@ -60,7 +59,7 @@ namespace Domain.Repository
                         PushNotificationsViewModel pushNotification = new()
                         {
                             Id = dbPushNotification.Id,
-                            UserId = 1,
+                            UserId = dbPushNotification.UserId,
                             Endpoint = dbPushNotification.Endpoint,
                             P256DH = dbPushNotification.P256DH,
                             Auth = dbPushNotification.Auth,
@@ -93,7 +92,7 @@ namespace Domain.Repository
                     PushNotificationsViewModel pushNotification = new()
                     {
                         Id = dbPushNotification.Id,
-                        UserId = 1,
+                        UserId = dbPushNotification.UserId,
                         Endpoint = dbPushNotification.Endpoint,
                         Auth = dbPushNotification.Auth,
                         CreatedDate = dbPushNotification.CreatedDate,
@@ -111,11 +110,11 @@ namespace Domain.Repository
             }
         }
 
-        public async Task<PushNotificationsViewModel> ReadByEndpointAsync(string endpoint)
+        public async Task<PushNotificationsViewModel> ReadByUserIdAsync(int userId)
         {
             try
             {
-                PushNotifications pushNotification = await _dbPushNotificationsRepository.GetByEndpoint(endpoint);
+                PushNotifications pushNotification = await _dbPushNotificationsRepository.GetByUserId(userId);
                 if (pushNotification is not null)
                 {
                     PushNotificationsViewModel pushNotificationsViewModel = new()

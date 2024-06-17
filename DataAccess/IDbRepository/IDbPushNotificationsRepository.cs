@@ -9,6 +9,6 @@ namespace DataAccess.IDbRepository
 {
     public interface IDbPushNotificationsRepository : IDbBaseRepository<PushNotifications>
     {
-        Task<PushNotifications> GetByEndpoint(string endpoint);
+        Task<PushNotifications> GetByUserId(int userId);
     }
 }

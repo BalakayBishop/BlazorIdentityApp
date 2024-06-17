@@ -18,9 +18,9 @@ namespace DataAccess.DbRepository
             _db = db;
         }
 
-        public async Task<PushNotifications> GetByEndpoint(string endpoint)
+        public async Task<PushNotifications> GetByUserId(int userId)
         {
-            PushNotifications pushNotification = await _db.Set<PushNotifications>().FindAsync(endpoint);
+            PushNotifications pushNotification = await _db.Set<PushNotifications>().FirstOrDefaultAsync(p => p.UserId == userId);
             return pushNotification;
         }
     }

@@ -64,9 +64,9 @@ else
 }
 
 @code {
-    List<RecordsViewModel> records;
-    bool loading = true;
+    private bool loading = true;
     private InputModel Input = new();
+    private List<RecordsViewModel> records;
 
     protected override void OnInitialized()
     {
@@ -77,7 +77,7 @@ else
     {
         if (firstRender)
         {
-            await LoadRecordsAsync();
+            // await LoadRecordsAsync();
             loading = false;
             StateHasChanged();
         }
@@ -107,12 +107,13 @@ else
     {
         AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
         var currentUser = authState.User;
+        string email = currentUser.Identity.Name;
 
         RecordsViewModel newRecord = new()
         {
             Title = Input.Title,
             Description = Input.Description,
-            UserEmail = currentUser.Identity.Name
+            UserEmail = email
         };
 
         HttpResponseMessage response = await _httpClient.PostAsJsonAsync("api/records", newRecord);
