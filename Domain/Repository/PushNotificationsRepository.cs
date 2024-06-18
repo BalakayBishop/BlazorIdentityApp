@@ -141,7 +141,7 @@ namespace Domain.Repository
             {
                 try
                 {
-                    PushNotifications dbPushNotification = await _dbPushNotificationsRepository.GetByEndpoint(pushNotification.Endpoint);
+                    PushNotifications dbPushNotification = await _dbPushNotificationsRepository.GetByUserId(pushNotification.UserId);
                     if (dbPushNotification is not null)
                     {
                         dbPushNotification.Endpoint = pushNotification.Endpoint;
