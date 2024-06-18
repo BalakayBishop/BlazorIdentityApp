@@ -5,7 +5,6 @@
 @attribute [Authorize]
 
 @inject AuthenticationStateProvider _auth
-@inject IPushNotificationsRepository _pushNotificationsRepository
 @inject HttpClient _httpClient
 
 <PageTitle>Settings</PageTitle>
@@ -48,7 +47,7 @@
     }
 
     [JSInvokable]
-    public static async Task<string> CreateOrUpdatePushSubscription(string data)
+    public static async Task<string> nCreateOrUpdatePushSubscription(string data)
     {
         try
         {

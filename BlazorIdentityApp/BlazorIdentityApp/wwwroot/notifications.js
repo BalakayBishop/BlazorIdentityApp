@@ -45,7 +45,7 @@ function updateBtn() {
 
 function updateSubscriptionOnServer(subscription) {
 
-    DotNet.invokeMethodAsync('BlazorWasmPwaPoc.Client', 'CreateOrUpdatePushSubscription', JSON.stringify(subscription))
+    DotNet.invokeMethodAsync('BlazorWasmPwaPoc.Client', 'nCreateOrUpdatePushSubscription', JSON.stringify(subscription))
         .then(response => {
             console.log(response);
         })
@@ -112,20 +112,13 @@ function initializeUI() {
         });
 }
 
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-    console.log('Service Worker and Push is supported');
+navigator.serviceWorker.register('sw.js')
+    .then(function (swReg) {
+        console.log('Service Worker is registered', swReg);
 
-    navigator.serviceWorker.register('sw.js')
-        .then(function (swReg) {
-            console.log('Service Worker is registered', swReg);
-
-            swRegistration = swReg;
-            initializeUI();
-        })
-        .catch(function (error) {
-            console.error('Service Worker Error', error);
-        });
-} else {
-    console.warn('Push messaging is not supported');
-    pushButton.textContent = 'Push Not Supported';
-}
+        swRegistration = swReg;
+        initializeUI();
+    })
+    .catch(function (error) {
+        console.error('Service Worker Error', error);
+    });

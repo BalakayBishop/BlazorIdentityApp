@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\home.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\home.js" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<ProjectReference Include="..\..\DataAccess\DataAccess.csproj" />
 	<ProjectReference Include="..\..\Domain\Domain.csproj" />
     <ProjectReference Include="..\BlazorIdentityApp.Client\BlazorIdentityApp.Client.csproj" />

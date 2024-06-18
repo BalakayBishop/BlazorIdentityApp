@@ -4,8 +4,55 @@
 
 @attribute [Authorize]
 
+@inject AuthenticationStateProvider _auth
+@inject HttpClient _httpClient
+
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<script src="home.js"></script>
+
+@code {
+    public async Task<string> hGetCurrentUserEmail()
+    {
+        var currentUser = await _auth.GetAuthenticationStateAsync();
+        return currentUser.User.Identity.Name;
+    }
+
+    [JSInvokable]
+    public static async Task<string> hCreateOrUpdatePushSubscription(string data)
+    {
+        try
+        {
+            HttpClient newHttp = new HttpClient();
+            newHttp.BaseAddress = new Uri("https://localhost:7071");
+
+            Home thisObj = new();
+            string email = await thisObj.hGetCurrentUserEmail();
+
+            NotificationRequestViewModel request = new()
+            {
+                json = data,
+                email = email
+            };
+
+            HttpResponseMessage response = await newHttp.PostAsJsonAsync("api/PushNotifications/CreateOrUpdate", request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                return $"Error: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            return $"Exception: {ex.Message}";
+        }
+    }
+}
