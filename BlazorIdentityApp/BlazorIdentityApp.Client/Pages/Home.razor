@@ -6,6 +6,7 @@
 
 @inject AuthenticationStateProvider _auth
 @inject HttpClient _httpClient
+@inject IJSRuntime JS
 
 <PageTitle>Home</PageTitle>
 
@@ -16,6 +17,19 @@ Welcome to your new app.
 <script src="home.js"></script>
 
 @code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender)
+        {
+            CheckFirstValue();
+        }
+    }
+
+    public async void CheckFirstValue()
+    {
+        await JS.InvokeVoidAsync("checkFirstVisit");
+    }
+
     public async Task<string> hGetCurrentUserEmail()
     {
         var currentUser = await _auth.GetAuthenticationStateAsync();

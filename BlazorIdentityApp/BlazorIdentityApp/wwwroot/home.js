@@ -3,8 +3,6 @@
 var swRegistration = null;
 
 function GetSubscription() {
-    console.log(swRegistration);
-
     // Check for pushManager subscription
     swRegistration.pushManager.getSubscription()
         .then(function (subscription) {
@@ -54,7 +52,8 @@ function CheckOnLoad() {
     }
 }
 
-function checkFirstVisit() {
+// Calling this function from Blazor
+async function checkFirstVisit() {
     // grab session item
     var isFirstVisit = sessionStorage.getItem('firstVisit');
 
@@ -69,6 +68,3 @@ function checkFirstVisit() {
         console.log('Returning visit this session');
     }
 }
-
-// When the page loads call function to check if first visit
-window.onload = checkFirstVisit;

@@ -94,31 +94,4 @@ function initializeUI() {
             subscribeUser();
         }
     });
-
-    // Set the initial subscription value
-    swRegistration.pushManager.getSubscription()
-        .then(function (subscription) {
-            isSubscribed = !(subscription === null);
-
-            updateSubscriptionOnServer(subscription);
-
-            if (isSubscribed) {
-                console.log('User IS subscribed.');
-            } else {
-                console.log('User is NOT subscribed.');
-            }
-
-            updateBtn();
-        });
 }
-
-navigator.serviceWorker.register('sw.js')
-    .then(function (swReg) {
-        console.log('Service Worker is registered', swReg);
-
-        swRegistration = swReg;
-        initializeUI();
-    })
-    .catch(function (error) {
-        console.error('Service Worker Error', error);
-    });
