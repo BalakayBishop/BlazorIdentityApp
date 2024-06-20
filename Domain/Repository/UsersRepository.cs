@@ -18,21 +18,21 @@ namespace Domain.Repository
             _dbUsersRepository = dbUsersRepository;
         }
 
-        public async Task<UsersViewModel> CreateAsync(UsersViewModel user)
+        public async Task<UsersViewModel> CreateAsync(UsersViewModel userToCreate)
         {
             try
             {
-                Users dbUser = new()
+                Users newUserEntity = new()
                 {
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
+                    FirstName = userToCreate.FirstName,
+                    LastName = userToCreate.LastName,
+                    Email = userToCreate.Email,
                     CreatedDate = DateTime.UtcNow,
                 };
-                await _dbUsersRepository.Create(dbUser);
-                user.Id = dbUser.Id;
+                await _dbUsersRepository.Create(newUserEntity);
+                userToCreate.Id = newUserEntity.Id;
 
-                return user;
+                return userToCreate;
             }
             catch
             {
@@ -53,6 +53,7 @@ namespace Domain.Repository
                         Id = dbUser.Id,
                         FirstName = dbUser.FirstName,
                         LastName = dbUser.LastName,
+                        Email= dbUser.Email,
                         CreatedDate = dbUser.CreatedDate,
                     };
 

@@ -20,6 +20,15 @@
 else
 {
     <div class="w-50 mt-5 mb-3">
+        @* 
+        /// <summary>
+        /// Represents the form for submitting a new record.
+        /// </summary>
+        /// <method>POST</method>
+        /// <model name="Input">The input model for the record.</model>
+        /// <input name="Title" type="text">The title for the record.</input>
+        /// <input name="Title" type="text">The description for the record.</input>
+        *@
         <EditForm Model="Input" OnSubmit="SubmitRecord" FormName="NewRecordForm" method="POST">
             <label for="title" class="form-label">Title</label>
             <InputText @bind-Value="Input.Title" class="form-control mb-3" placeholder="Title" aria-required="true" required />
@@ -54,7 +63,7 @@ else
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-start">
                         <div class="ms-2 me-auto">
-                            <div class="fw-bold">No records to display</div>
+                            <div class="fw-bold">@errorMessage</div>
                         </div>
                     </li>
                 }
@@ -66,48 +75,60 @@ else
 @code {
     private bool loading = true;
     private InputModel Input = new();
-    private List<RecordsViewModel> records;
+    private List<RecordsViewModel>? records;
+    private string? errorMessage = "No records to display";
 
+    /// <summary>
+    /// Initializes the component.
+    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();
     }
 
+    /// <summary>
+    /// Executes after the component has been rendered.
+    /// </summary>
+    /// <param name="firstRender">Indicates whether this is the first render of the component.</param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // await LoadRecordsAsync();
+            await LoadRecordsAsync();
             loading = false;
             StateHasChanged();
         }
     }
 
+    /// <summary>
+    /// Loads the records asynchronously.
+    /// </summary>
     private async Task LoadRecordsAsync()
     {
         try
         {
-            records = await _httpClient.GetFromJsonAsync<List<RecordsViewModel>>("api/records") ?? throw new NullReferenceException("Records API returned null");
+            records = await _httpClient.GetFromJsonAsync<List<RecordsViewModel>>("api/records") ?? new List<RecordsViewModel>();
         }
         catch (NullReferenceException n)
         {
             Console.WriteLine(n.Message);
             records = null!;
-            throw;
+            errorMessage = "Failed to load records. Please try again later.";
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
             records = null!;
-            throw;
+            errorMessage = "An error occurred while loading records. Please try again later.";
         }
     }
 
+    /// <summary>
+    /// Submits a new record.
+    /// </summary>
     private async Task SubmitRecord()
     {
-        AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
-        var currentUser = authState.User;
-        string email = currentUser.Identity.Name;
+        string email = (await _auth.GetAuthenticationStateAsync()).User.Identity.Name;
 
         RecordsViewModel newRecord = new()
         {
@@ -128,6 +149,9 @@ else
         }
     }
 
+    /// <summary>
+    /// Represents the input model for a record.
+    /// </summary>
     private sealed class InputModel
     {
         [Required]

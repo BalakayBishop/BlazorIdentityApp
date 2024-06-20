@@ -15,12 +15,23 @@ namespace Domain.Repository
     {
         private readonly IDbUsersRepository _dbUsersRepository;
         private readonly IDbPushNotificationsRepository _dbPushNotificationsRepository;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PushNotificationsRepository"/> class.
+        /// </summary>
+        /// <param name="dbPushNotificationsRepository">The database push notifications repository.</param>
+        /// <param name="dbUsersRepository">The database users repository.</param>
         public PushNotificationsRepository(IDbPushNotificationsRepository dbPushNotificationsRepository, IDbUsersRepository dbUsersRepository)
         {
             _dbPushNotificationsRepository = dbPushNotificationsRepository;
             _dbUsersRepository = dbUsersRepository;
         }
 
+        /// <summary>
+        /// Creates a new push notification asynchronously.
+        /// </summary>
+        /// <param name="pushNotification">The push notification view model.</param>
+        /// <returns>The created push notification view model.</returns>
         public async Task<PushNotificationsViewModel> CreateAsync(PushNotificationsViewModel pushNotification)
         {
             try
@@ -45,6 +56,10 @@ namespace Domain.Repository
             }
         }
 
+        /// <summary>
+        /// Retrieves all push notifications asynchronously.
+        /// </summary>
+        /// <returns>A list of push notification view models.</returns>
         public async Task<List<PushNotificationsViewModel>> ReadAllAsync()
         {
             try
@@ -81,6 +96,11 @@ namespace Domain.Repository
             }
         }
 
+        /// <summary>
+        /// Retrieves a push notification by its ID asynchronously.
+        /// </summary>
+        /// <param name="id">The ID of the push notification.</param>
+        /// <returns>The push notification view model.</returns>
         public async Task<PushNotificationsViewModel> ReadAsync(int id)
         {
             try
@@ -110,6 +130,11 @@ namespace Domain.Repository
             }
         }
 
+        /// <summary>
+        /// Retrieves a push notification by user ID asynchronously.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>The push notification view model.</returns>
         public async Task<PushNotificationsViewModel> ReadByUserIdAsync(int userId)
         {
             try
@@ -135,6 +160,11 @@ namespace Domain.Repository
             catch { return null!; }
         }
 
+        /// <summary>
+        /// Updates a push notification asynchronously.
+        /// </summary>
+        /// <param name="pushNotification">The push notification view model.</param>
+        /// <returns>The updated push notification view model.</returns>
         public async Task<PushNotificationsViewModel> UpdateAsync(PushNotificationsViewModel pushNotification)
         {
             if (pushNotification is not null)
@@ -163,13 +193,18 @@ namespace Domain.Repository
             return null!;
         }
 
+        /// <summary>
+        /// Updates a range of push notifications asynchronously.
+        /// </summary>
+        /// <param name="pushNotifications">The list of push notification view models.</param>
+        /// <returns>The updated list of push notification view models.</returns>
         public async Task<List<PushNotificationsViewModel>> UpdateRangeAsync(List<PushNotificationsViewModel> pushNotifications)
         {
             if (pushNotifications is not null)
             {
                 try
                 {
-                    List<PushNotifications> dbPushNotifications= new();
+                    List<PushNotifications> dbPushNotifications = new();
                     foreach (PushNotificationsViewModel push in pushNotifications)
                     {
                         PushNotifications dbPush = await _dbPushNotificationsRepository.GetById(push.Id);

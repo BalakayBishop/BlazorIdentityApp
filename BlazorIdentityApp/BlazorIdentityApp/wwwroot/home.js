@@ -8,11 +8,13 @@ function GetSubscription() {
         .then(function (subscription) {
             var isSubscribed = !(subscription === null);
 
-            // If the user is already subscribed, call Blazor to update the db record
+            // If the user is already subscribed
             if (isSubscribed) {
                 console.log('User IS subscribed.');
                 sessionStorage.setItem("subscribed", "subscribed");
-                DotNet.invokeMethodAsync('BlazorWasmPwaPoc.Client', 'hCreateOrUpdatePushSubscription', JSON.stringify(subscription))
+                var email = $('#currentUserEmail').attr('data-currentUser');
+                // call Blazor to update the db record
+                DotNet.invokeMethodAsync('BlazorIdentityApp.Client', 'hCreateOrUpdatePushSubscription', JSON.stringify(subscription), email)
                     .then(response => {
                         console.log(response);
                     })
@@ -38,7 +40,6 @@ function CheckOnLoad() {
                 console.log('Service Worker is registered', swReg);
                 sessionStorage.setItem("sw", "registered");
                 swRegistration = swReg;
-
                 GetSubscription();
             })
             .catch(function (error) {

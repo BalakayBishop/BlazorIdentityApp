@@ -14,6 +14,12 @@
 
 Welcome to your new app.
 
+<AuthorizeView>
+    <Authorized>
+        <input type="hidden" id="currentUserEmail" data-currentUser="@context.User.Identity?.Name" />
+    </Authorized>
+</AuthorizeView>
+
 <script src="home.js"></script>
 
 @code {
@@ -25,27 +31,27 @@ Welcome to your new app.
         }
     }
 
+    /// <summary>
+    /// Invokes the "checkFirstVisit" JavaScript function to check the firstVisit sessionStorage item.
+    /// </summary>
     public async void CheckFirstValue()
     {
         await JS.InvokeVoidAsync("checkFirstVisit");
     }
 
-    public async Task<string> hGetCurrentUserEmail()
-    {
-        var currentUser = await _auth.GetAuthenticationStateAsync();
-        return currentUser.User.Identity.Name;
-    }
-
+    /// <summary>
+    /// Handles the creation or update of a push subscription.
+    /// </summary>
+    /// <param name="data">The subscription data in JSON format.</param>
+    /// <param name="email">The email address associated with the subscription.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a string message indicating the outcome of the operation.</returns>
     [JSInvokable]
-    public static async Task<string> hCreateOrUpdatePushSubscription(string data)
+    public static async Task<string> hCreateOrUpdatePushSubscription(string data, string email)
     {
         try
         {
             HttpClient newHttp = new HttpClient();
             newHttp.BaseAddress = new Uri("https://localhost:7071");
-
-            Home thisObj = new();
-            string email = await thisObj.hGetCurrentUserEmail();
 
             NotificationRequestViewModel request = new()
             {

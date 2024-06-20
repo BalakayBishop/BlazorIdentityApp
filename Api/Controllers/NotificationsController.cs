@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Json;
 using WebPush;
+using System.Net.Mail;
 
 namespace Api.Controllers
 {
@@ -41,8 +42,8 @@ namespace Api.Controllers
             {
                 try
                 {
-                    // Get config strings 
 #nullable disable
+                    // Get config strings 
                     string publicKey = _configuration.GetValue<string>("Firebase:gcmPublicKey").ToString();
                     string privateKey = _configuration.GetValue<string>("Firebase:gcmPrivateKey").ToString();
 #nullable enable
@@ -50,6 +51,61 @@ namespace Api.Controllers
                     // If failed to get keys throw exception, end the method
                     if (publicKey is null || privateKey is null)
                         throw new ArgumentNullException("Public or Private key argument null");
+                
+                    foreach (var pushNotification in pushNotifications)
+                    {
+                        try
+                        {
+                            // Get the User Associated with this PushNotification record
+                            UsersViewModel user = await _usersRepository.ReadAsync(pushNotification.UserId);
+
+                            string pushEndpoint = pushNotification.Endpoint;
+                            string p256dh = pushNotification.P256DH;
+                            string auth = pushNotification.Auth;
+
+                            string subject = "mailto:" + user.Email;
+
+                            var payload = new
+                            {
+                                title = "Hello, World!",
+                                body = "New record created!"
+                            };
+
+                            string payloadJson = JsonSerializer.Serialize(payload);
+
+                            // Initialize WebPush
+                            PushSubscription subscription = new PushSubscription(pushEndpoint, p256dh, auth);
+                            VapidDetails vapidDetails = new VapidDetails(subject, publicKey, privateKey);
+
+                            WebPushClient webPushClient = new WebPushClient();
+
+                            // Call WebPush API
+                            await webPushClient.SendNotificationAsync(subscription, payloadJson, vapidDetails);
+
+                            // New UserNotification obj
+                            UserNotificationsViewModel newUNotification = new()
+                            {
+                                UserId = user.Id,
+                                PushId = pushNotification.Id,
+                                Title = payload.title,
+                                Body = payload.body,
+                            };
+
+                            // Save new UserNotification obj to db to indicate notification sent 
+                            UserNotificationsViewModel newUserNotification = await _userNotificationsRepository.CreateAsync(newUNotification);
+                        }
+                        catch (WebPushException exception)
+                        {
+                            Console.WriteLine("WebPush: Http STATUS code" + exception.StatusCode);
+                            Console.WriteLine("WebPush: " + exception.Message);
+                            continue;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Unexpected error: " + ex.Message);
+                            continue;
+                        }
+                    }
                 }
                 catch (ArgumentNullException n)
                 {
@@ -60,62 +116,6 @@ namespace Api.Controllers
                 {
                     Console.WriteLine("Unexpected error: " + e.Message);
                     return BadRequest();
-                }
-
-
-                foreach (var pushNotification in pushNotifications)
-                {
-                    try
-                    {
-                        // Get the User Associated with this PushNotification record
-                        UsersViewModel user = await _usersRepository.ReadAsync(pushNotification.UserId);
-
-                        string pushEndpoint = pushNotification.Endpoint;
-                        string p256dh = pushNotification.P256DH;
-                        string auth = pushNotification.Auth;
-
-                        string subject = user.Email;
-
-                        var payload = new
-                        {
-                            title = "Hello, World!",
-                            body = "New record created!"
-                        };
-
-                        string payloadJson = JsonSerializer.Serialize(payload);
-
-                        // Initialize WebPush
-                        PushSubscription subscription = new PushSubscription(pushEndpoint, p256dh, auth);
-                        VapidDetails vapidDetails = new VapidDetails(subject, publicKey, privateKey);
-
-                        WebPushClient webPushClient = new WebPushClient();
-
-                        // Call WebPush API
-                        await webPushClient.SendNotificationAsync(subscription, payloadJson, vapidDetails);
-
-                        // New UserNotification obj
-                        UserNotificationsViewModel newUNotification = new()
-                        {
-                            UserId = user.Id,
-                            PushId = pushNotification.Id,
-                            Title = payload.title,
-                            Body = payload.body,
-                        };
-
-                        // Save new UserNotification obj to db to indicate notification sent 
-                        UserNotificationsViewModel newUserNotification = await _userNotificationsRepository.CreateAsync(newUNotification);
-                    }
-                    catch (WebPushException exception)
-                    {
-                        Console.WriteLine("WebPush: Http STATUS code" + exception.StatusCode);
-                        Console.WriteLine("WebPush: " + exception.Message);
-                        continue;
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Unexpected error: " + ex.Message);
-                        continue;
-                    }
                 }
 
                 return Ok();
