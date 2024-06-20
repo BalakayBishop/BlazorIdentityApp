@@ -2,17 +2,13 @@
 using DataAccess.Entities;
 using Domain.IRepository;
 using Domain.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Repository
 {
     public class UsersRepository : IUsersRepository
     {
         private readonly IDbUsersRepository _dbUsersRepository;
+
         public UsersRepository(IDbUsersRepository dbUsersRepository)
         {
             _dbUsersRepository = dbUsersRepository;
@@ -20,230 +16,113 @@ namespace Domain.Repository
 
         public async Task<UsersViewModel> CreateAsync(UsersViewModel userToCreate)
         {
-            try
+            Users newUserEntity = new()
             {
-                Users newUserEntity = new()
-                {
-                    FirstName = userToCreate.FirstName,
-                    LastName = userToCreate.LastName,
-                    Email = userToCreate.Email,
-                    CreatedDate = DateTime.UtcNow,
-                };
-                await _dbUsersRepository.Create(newUserEntity);
-                userToCreate.Id = newUserEntity.Id;
+                FirstName = userToCreate.FirstName,
+                LastName = userToCreate.LastName,
+                Email = userToCreate.Email,
+                CreatedDate = DateTime.UtcNow,
+            };
+            await _dbUsersRepository.Create(newUserEntity);
+            userToCreate.Id = newUserEntity.Id;
 
-                return userToCreate;
-            }
-            catch
-            {
-                return null!;
-            }
+            return userToCreate;
         }
 
         public async Task<UsersViewModel> ReadAsync(int id)
         {
-            try
+            Users dbUser = await _dbUsersRepository.GetById(id);
+            return dbUser != null ? new UsersViewModel
             {
-                Users dbUser = await _dbUsersRepository.GetById(id);
-
-                if (dbUser is not null)
-                {
-                    UsersViewModel user = new()
-                    {
-                        Id = dbUser.Id,
-                        FirstName = dbUser.FirstName,
-                        LastName = dbUser.LastName,
-                        Email= dbUser.Email,
-                        CreatedDate = dbUser.CreatedDate,
-                    };
-
-                    return user;
-                }
-
-                return null!;
-            }
-            catch
-            {
-                return null!;
-            }
+                Id = dbUser.Id,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName,
+                Email = dbUser.Email,
+                CreatedDate = dbUser.CreatedDate,
+            } : null!;
         }
 
         public async Task<UsersViewModel> ReadAsync(string email)
         {
-            try
+            Users dbUser = await _dbUsersRepository.GetByEmailAsync(email);
+            return dbUser != null ? new UsersViewModel
             {
-                Users dbUser = await _dbUsersRepository.GetByEmailAsync(email);
-
-                if (dbUser is not null)
-                {
-                    UsersViewModel user = new()
-                    {
-                        Id = dbUser.Id,
-                        FirstName = dbUser.FirstName,
-                        LastName = dbUser.LastName,
-                    };
-
-                    return user;
-                }
-
-                return null!;
-            }
-            catch
-            {
-                return null!;
-            }
+                Id = dbUser.Id,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName,
+            } : null!;
         }
 
         public async Task<List<UsersViewModel>> ReadAllAsync()
         {
-            try
+            List<Users> dbUsers = await _dbUsersRepository.GetAll();
+            return dbUsers.Select(dbUser => new UsersViewModel
             {
-                List<Users> dbUsers = await _dbUsersRepository.GetAll();
-
-                if (dbUsers is not null)
-                {
-                    List<UsersViewModel> users = new();
-                    foreach (Users dbUser in dbUsers)
-                    {
-                        UsersViewModel user = new()
-                        {
-                            Id = dbUser.Id,
-                            FirstName = dbUser.FirstName,
-                            LastName = dbUser.LastName,
-                        };
-
-                        users.Add(user);
-                    }
-
-                    return users;
-                }
-
-                return null!;
-            }
-            catch
-            {
-                return null!;
-            }
+                Id = dbUser.Id,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName,
+            }).ToList();
         }
 
         public async Task<UsersViewModel> UpdateAsync(UsersViewModel user)
         {
-            if (user is not null)
+            Users dbUser = await _dbUsersRepository.GetById(user.Id);
+            if (dbUser != null)
             {
-                try
-                {
-                    Users dbUser = await _dbUsersRepository.GetById(user.Id);
-                    if (dbUser is not null)
-                    {
-                        dbUser.FirstName = user.FirstName;
-                        dbUser.LastName = user.LastName;
-                        await _dbUsersRepository.Update(dbUser);
+                dbUser.FirstName = user.FirstName;
+                dbUser.LastName = user.LastName;
+                await _dbUsersRepository.Update(dbUser);
 
-                        return user;
-                    }
-                }
-                catch
-                {
-                    return null!;
-                }
+                return user;
             }
-
             return null!;
         }
 
         public async Task<List<UsersViewModel>> UpdateRangeAsync(List<UsersViewModel> users)
         {
-            if (users is not null)
+            var dbUsers = new List<Users>();
+            foreach (var user in users)
             {
-                try
+                var dbUser = await _dbUsersRepository.GetById(user.Id);
+                if (dbUser != null)
                 {
-                    List<Users> dbUsers = new();
-                    foreach (UsersViewModel user in users)
-                    {
-                        Users dbUser = await _dbUsersRepository.GetById(user.Id);
-                        if (dbUser is not null)
-                        {
-                            dbUser.FirstName = user.FirstName;
-                            dbUser.LastName = user.LastName;
-                            dbUsers.Add(dbUser);
-                        }
-                    }
-                    await _dbUsersRepository.UpdateRange(dbUsers);
-
-                    return users;
-                }
-                catch
-                {
-                    return null!;
+                    dbUser.FirstName = user.FirstName;
+                    dbUser.LastName = user.LastName;
+                    dbUsers.Add(dbUser);
                 }
             }
+            await _dbUsersRepository.UpdateRange(dbUsers);
 
-            return null!;
+            return users;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            try
-            {
-                await _dbUsersRepository.Delete(id);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            await _dbUsersRepository.Delete(id);
+            return true;
         }
 
         public async Task<bool> DeleteRangeAsync(List<int> ids)
         {
-            try
-            {
-                List<Users> dbUsers = await _dbUsersRepository.GetAll();
-                dbUsers = dbUsers.Where(u => ids.Contains(u.Id)).ToList();
-                await _dbUsersRepository.DeleteRange(dbUsers);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            List<Users> dbUsers = await _dbUsersRepository.GetAll();
+            var usersToDelete = dbUsers.Where(u => ids.Contains(u.Id)).ToList();
+            await _dbUsersRepository.DeleteRange(usersToDelete);
+            return true;
         }
 
         public async Task<bool> DeleteAsync(UsersViewModel user)
         {
-            try
-            {
-                Users dbUser = await _dbUsersRepository.GetById(user.Id);
-                await _dbUsersRepository.Delete(dbUser);
-
-                return true;
-            }
-            catch
-            {
-                return true;
-            }
+            await _dbUsersRepository.Delete(user.Id);
+            return true;
         }
 
         public async Task<bool> DeleteRangeAsync(List<UsersViewModel> users)
         {
-            try
-            {
-                List<Users> dbUsers = new();
-                foreach (UsersViewModel user in users)
-                {
-                    Users dbUser = await _dbUsersRepository.GetById(user.Id);
-                    dbUsers.Add(dbUser);
-                }
-                await _dbUsersRepository.DeleteRange(dbUsers);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var ids = users.Select(u => u.Id).ToList();
+            List<Users> dbUsers = await _dbUsersRepository.GetAll();
+            var usersToDelete = dbUsers.Where(u => ids.Contains(u.Id)).ToList();
+            await _dbUsersRepository.DeleteRange(usersToDelete);
+            return true;
         }
     }
 }
