@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Json;
 using WebPush;
-using System.Net.Mail;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Identity;
+using Azure;
 
 namespace Api.Controllers
 {
@@ -43,8 +45,8 @@ namespace Api.Controllers
                 try
                 {
 #nullable disable
-                    // Get config strings 
-                    string publicKey = _configuration.GetValue<string>("Firebase:gcmPublicKey").ToString();
+                    // Get config strings
+                    string publicKey = _configuration.GetValue<string>("Firebase:gcmPrivateKey").ToString();
                     string privateKey = _configuration.GetValue<string>("Firebase:gcmPrivateKey").ToString();
 #nullable enable
 

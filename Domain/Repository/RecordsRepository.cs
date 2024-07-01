@@ -19,6 +19,11 @@ namespace Domain.Repository
             _dbRecordsRepository = dbRecordsRepository;
         }
 
+        /// <summary>
+        /// Asynchronously creates a new record in the database.
+        /// </summary>
+        /// <param name="record">The record view model containing the data to be added.</param>
+        /// <returns>The created record view model with the ID populated, or null if an error occurs.</returns>
         public async Task<RecordsViewModel> CreateAsync(RecordsViewModel record)
         {
             try
@@ -49,19 +54,13 @@ namespace Domain.Repository
 
                 if (dbRecords is not null)
                 {
-                    List<RecordsViewModel> records = new();
-                    foreach (Records dbRecord in dbRecords)
+                    var records = dbRecords.ConvertAll(dbRecord => new RecordsViewModel
                     {
-                        RecordsViewModel record = new()
-                        {
-                            Id = dbRecord.Id,
-                            Title = dbRecord.Title,
-                            Description = dbRecord.Description,
-                            CreatedDate = dbRecord.CreatedDate,
-                        };
-
-                        records.Add(record);
-                    }
+                        Id = dbRecord.Id,
+                        Title = dbRecord.Title,
+                        Description = dbRecord.Description,
+                        CreatedDate = dbRecord.CreatedDate,
+                    });
 
                     return records;
                 }
