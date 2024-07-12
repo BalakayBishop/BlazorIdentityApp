@@ -25,6 +25,11 @@ namespace Api.Controllers
             return Ok(pushNotifications);
         }
 
+        /// <summary>
+        /// Creates or updates a push notification.
+        /// </summary>
+        /// <param name="request">The notification request.</param>
+        /// <returns>The result of the operation.</returns>
         [HttpPost("CreateOrUpdate")]
         public async Task<IActionResult> CreatePushNotification([FromBody] NotificationRequestViewModel request)
         {
@@ -40,7 +45,6 @@ namespace Api.Controllers
                     PushNotificationsViewModel dbPushNotification = await _notificationsRepository.ReadByUserIdAsync(user.Id);
                     if (dbPushNotification is not null)
                     {
-                        // Record exists, update with new subscription info
                         dbPushNotification.Endpoint = pushSubObj.Endpoint;
                         dbPushNotification.P256DH = pushSubObj.Keys.P256dh;
                         dbPushNotification.Auth = pushSubObj.Keys.Auth;
@@ -50,7 +54,6 @@ namespace Api.Controllers
                     }
                     else
                     {
-                        // Record does not exist, create new 
                         PushNotificationsViewModel newPushNotification = new()
                         {
                             UserId = user.Id,

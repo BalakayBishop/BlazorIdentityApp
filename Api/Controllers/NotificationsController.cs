@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Json;
 using WebPush;
-using Azure.Security.KeyVault.Secrets;
-using Azure.Identity;
-using Azure;
 
 namespace Api.Controllers
 {
@@ -46,7 +43,7 @@ namespace Api.Controllers
                 {
 #nullable disable
                     // Get config strings
-                    string publicKey = _configuration.GetValue<string>("Firebase:gcmPrivateKey").ToString();
+                    string publicKey = _configuration.GetValue<string>("Firebase:gcmPublicKey").ToString();
                     string privateKey = _configuration.GetValue<string>("Firebase:gcmPrivateKey").ToString();
 #nullable enable
 
@@ -70,7 +67,7 @@ namespace Api.Controllers
                             var payload = new
                             {
                                 title = "Hello, World!",
-                                body = "New record created!"
+                                body = "https://www.google.com"
                             };
 
                             string payloadJson = JsonSerializer.Serialize(payload);
