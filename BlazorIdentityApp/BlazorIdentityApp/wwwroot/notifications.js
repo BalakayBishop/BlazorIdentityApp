@@ -60,7 +60,7 @@ function updateSubscriptionOnServer(subscription) {
 /// </summary>
 function subscribeUser() {
     // Public Key from Firebase Cloud Messaging
-    const applicationServerPublicKey = 'BFKuJ6J0cxmJAtBYDazFjSzBtyg6MajHbfnwBXsfFkZDmu8vQgtv-hKPNggwEBqpF2qquxguBHMoGh-65_96ACI';
+    const applicationServerPublicKey = 'BMboSCc9YRKnoNAf6xwlCwS5BHcIQY77Veqt1W8XTO33_1vycANd6SDH4qlRgJNT9V_l9Hje6n1EbBZiQ_dKad8';
     const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
 
     navigator.serviceWorker.ready.then(function (registration) {

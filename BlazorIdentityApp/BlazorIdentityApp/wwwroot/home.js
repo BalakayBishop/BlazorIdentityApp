@@ -11,6 +11,7 @@ function GetSubscription() {
             // If the user is already subscribed
             if (isSubscribed) {
                 console.log('User IS subscribed.');
+                console.log(subscription);
                 sessionStorage.setItem("subscribed", "subscribed");
                 var email = $('#currentUserEmail').attr('data-currentUser');
                 // call Blazor to update the db record

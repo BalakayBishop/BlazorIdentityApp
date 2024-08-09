@@ -49,10 +49,10 @@
             newHttp.BaseAddress = new Uri("https://localhost:7071");
 
             NotificationRequestViewModel request = new()
-                {
-                    json = data,
-                    email = email
-                };
+            {
+                json = data,
+                email = email
+            };
 
             HttpResponseMessage response = await newHttp.PostAsJsonAsync("api/PushNotifications/CreateOrUpdate", request);
 
