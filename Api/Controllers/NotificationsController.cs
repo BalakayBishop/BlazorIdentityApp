@@ -67,16 +67,12 @@ namespace Api.Controllers
                             var payload = new
                             {
                                 title = "Hello, World!",
-                                body = "this is the body"
+                                body = "this is the body",
+                                tag = "BlazorIdentityApp",
+                                clickUrl = "https://localhost:7162/notifications"
                             };
 
                             string payloadJson = JsonSerializer.Serialize(payload);
-
-                            // Instanciate a new WebPush.PushSubcription, VapidDetails, & Client
-                            //PushSubscription pushSubscription = new PushSubscription
-                            //{
-                            //    Endpoint = "https://wns2-by3p.notify.windows.com/w/?token=BQYAAADeTGUmLGJ7YvCWR34SicQTcE6i6MfOnro%2f8QDDfjdRt97mE2kixHZ0c1pBs2vaW7b3K1EOmjOWTaXfDTJaT4ysiWgj2jdvv9on9QQ9AW1MWQSIi766MdzuUFpuRL8zlCKUhqvv3%2f9JD0MfWQOmiKXAjK3InLEm2yCD39Ny1kbQNtWI2%2f2fhIC6Q2zXg22iwz9ZOp63xcQZwfYGx4XdrsmGCjAQmTYj8wUmmF6U0hhGbb7wpe6ED%2fe5H5xcqFELiW%2bRE6C3sGafLNT63EuSkTJ%2ftKrYMreK7kfJfAqyaiOrKVp63WEzxK%2fAd1hhXTh9RaE%3d",
-                            //};
 
                             var vapidKeys = VapidHelper.GenerateVapidKeys();
 
